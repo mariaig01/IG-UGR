@@ -572,7 +572,6 @@ void GrafoCubos::actualizarEstadoParametro( const unsigned iParam, const float t
 
 
 
-
 //--------------------------------------------------------------------------
 
 
@@ -1360,3 +1359,14 @@ void Casa::actualizarEstadoParametro( const unsigned iParam, const float t_sec )
 }
 
 
+
+//PRÁCTICA 4
+NodoCubo24::NodoCubo24(){
+   NodoGrafoEscena *cubo = new NodoGrafoEscena();
+   Textura *iconoUGR = new Textura("window-icon.jpg");
+   Material *material = new Material(iconoUGR, 0.5, 0.3, 0.7, 20.0);
+   cubo->ponerColor({0.8, 0.8, 0.8});
+   cubo->agregar(material);
+   cubo->agregar(new Cubo24());
+   agregar(cubo);
+}

@@ -216,6 +216,13 @@ class Wall : public NodoGrafoEscena
 
 
 //-----------------------------------------------
+class NodoCubo24 : public NodoGrafoEscena
+{
+   public:
+   
+   NodoCubo24();
+   
+};
 
 
 

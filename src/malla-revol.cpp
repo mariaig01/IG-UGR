@@ -48,119 +48,111 @@ void MallaRevol::inicializar
    const unsigned               num_copias  // número de copias del perfil
 )
 {
-   vector<glm::vec3> aristas;
+   // COMPLETAR: Práctica 4: crear tablas de normales 
+   vector<vec3> aristas;
    vector<float> d_i;
-   bool semi = false;
 
    // Aristas
-   for (size_t i=0; i < perfil.size()-1; i++)
+   for (int i=0; i < perfil.size()-1; i++)
    {
       aristas.push_back(perfil[i+1]-perfil[i]);
-      d_i.push_back(glm::length(aristas[i]));
+      d_i.push_back(length(aristas[i]));
    }
 
-   float suma_distancias = 0.0;
-   for (size_t i=0; i < d_i.size(); i++)
-      suma_distancias += d_i[i];
+   float suma = 0.0;
+   for (int i=0; i < d_i.size(); i++)
+      suma += d_i[i];
 
 
    vector<float> t_i;
-
    // Calculo de las coordenadas de texturas
-   float suma_d_j;
-   for (size_t i=0; i < perfil.size(); i++)
+   float d_j;
+   for (int i=0; i < perfil.size(); i++)
    {
-      suma_d_j = 0.0;
-      for (uint j=0; j < i; j++)
-         suma_d_j += d_i[j];
+      d_j = 0.0;
+      for (int j=0; j < i; j++)
+         d_j += d_i[j];
       
-      t_i.push_back(suma_d_j / suma_distancias);
+      t_i.push_back(d_j / suma);
    }
 
-   vector<glm::vec3> normales_aristas;
+   vector<vec3> nor_aristas;
    // Calculo de las normales de las aristas del perfil
-   for (size_t i=0; i < aristas.size(); i++)
+   for (int i=0; i < aristas.size(); i++)
    {
-      glm::vec3 normal_arista = vec3(aristas[i].y, -aristas[i].x, 0);
+      vec3 nor_ari = vec3(aristas[i].y, -aristas[i].x, 0);
 
-      if (glm::length(normal_arista) != 0.0)
-         normal_arista = glm::normalize(normal_arista);
+      if (length(nor_ari) != 0.0)
+         nor_ari = normalize(nor_ari);
 
-      normales_aristas.push_back(normal_arista);
+      nor_aristas.push_back(nor_ari);
    }
 
    // Cálculo de las normales de los vértices del perfil
-   vector<glm::vec3> normales_vertices;
-   glm::vec3 normal_vertice;
+   vector<vec3> normales_vertices;
+   vec3 normal_vertice;
 
-   // n_0 = m_0
-   normales_vertices.push_back(normales_aristas[0]);
+  
+   normales_vertices.push_back(nor_aristas[0]);
    for (size_t i=1; i < perfil.size()-1; i++)
    {
       
-      normal_vertice = normales_aristas[i-1]+normales_aristas[i];
+      normal_vertice = nor_aristas[i-1]+nor_aristas[i];
 
-      // Modulo 1
+      
       if (glm::length(normal_vertice) != 0.0)
          normal_vertice = glm::normalize(normal_vertice);
 
       normales_vertices.push_back(normal_vertice);
    }
-   // n_{n-1} = m_{n-2}
-   normales_vertices.push_back(normales_aristas[perfil.size()-2]);
    
-   for (size_t i=0; i < num_copias; i++)
-   {
-      float theta;
-      if (!semi) // Complete circunference Default
-         theta = 2.0*M_PI*float(i) / float(num_copias -1);
-      else
-         theta = M_PI*float(i) / float(num_copias -1);
+   normales_vertices.push_back(nor_aristas[perfil.size()-2]);
 
-      for (size_t j=0; j < perfil.size(); j++)
-      {
+  // COMPLETAR: Práctica 2: completar: creación de la malla....
+
+  float x,y,z,rot;
+  float x_nor, y_nor, z_nor;
+  float seno, coseno;
+   // creación de tabla de vertices
+   for(int i=0; i<num_copias; ++i){
+      float angulo=(2*M_PI*i)/(num_copias-1);
+      coseno=cos(angulo);
+      seno=sin(angulo);
+      for(int j=0; j<perfil.size(); ++j){
          
-         float r = perfil[j].x;
-         float x_rot = r*cos(theta);
-         float y_rot = perfil[j].y;
-         float z_rot = -r*sin(theta);
-         vec3 vert_rot(x_rot, y_rot, z_rot);
+         x=coseno*perfil.at(j)[0]+seno*perfil.at(j)[2];
+         y=perfil.at(j)[1];
+         z=-seno*perfil.at(j)[0]+coseno*perfil.at(j)[2];
 
-         vertices.push_back(vert_rot);
+         vertices.push_back({x,y,z});
+         //añadir normales. La normal de cualquier vétice de la malla completa es igual
+         //a la normal (rotada) del correspondiente vértice del perfil original
 
-         // Rotacion de la normal
-         float r_normal = normales_vertices[j].x;
-         float x_normal_rot = r_normal*cos(theta);
-         float y_normal_rot = normales_vertices[j].y;
-         float z_normal_rot = -r_normal*sin(theta);
-         vec3 normal_rot(x_normal_rot, y_normal_rot, z_normal_rot);
+         //Rotacion de la normal
+         rot = normales_vertices[j].x;
+         x_nor = rot*cos(angulo);
+         y_nor = normales_vertices[j].y;
+         z_nor = -rot*sin(angulo);
+         vec3 aux = vec3(x_nor,y_nor,z_nor);
 
-         // Modulo 1
-         if (glm::length(normal_rot) != 0.0)
-            normal_rot = glm::normalize(normal_rot);
+         if (length(aux) != 0.0)
+            aux = normalize(aux);
+
+         nor_ver.push_back(aux);
          
-         nor_ver.push_back(normal_rot);
-
-         // Coordenadas de textura
+         // Añadir coordenadas de textura
          float s = float(i) / (num_copias-1);
          float t = 1 - t_i[j];
-         vec2 cc_tt_ver_actual(s,t);
-
-         cc_tt_ver.push_back(cc_tt_ver_actual);
+         cc_tt_ver.push_back({s,t});
       }
    }
-
-   for (size_t i=0; i < num_copias-1; i++)
-   {
-      for (size_t j=0; j < perfil.size()-1; j++)
-      {
-         unsigned int m = perfil.size();
-         unsigned int k = i*m+ j; 
-         uvec3 triangulo_1(k, k+m, k+m+1),
-               triangulo_2(k, k+m+1, k+1);
-               
-         triangulos.push_back(triangulo_1);
-         triangulos.push_back(triangulo_2);
+   // creación de triangulos
+   int k=0;
+   for( int i=0; i<num_copias-1; ++i){
+      for( int j=0; j<perfil.size()-1; ++j){
+         k=i*perfil.size() + j;
+         triangulos.push_back({k,k+perfil.size(),k+perfil.size()+1});
+         triangulos.push_back({k,k+perfil.size()+1,k+1});
       }
    }
 }
