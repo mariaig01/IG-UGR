@@ -1370,3 +1370,23 @@ NodoCubo24::NodoCubo24(){
    cubo->agregar(new Cubo24());
    agregar(cubo);
 }
+
+NodoDiscoP4::NodoDiscoP4(){
+   NodoGrafoEscena *cubo = new NodoGrafoEscena();
+   Textura *cuadricula = new Textura("cuadricula.jpg");
+   Material *material = new Material(cuadricula, 0.5, 0.3, 0.7, 20.0);
+   cubo->ponerColor({0.8, 0.8, 0.8});
+   cubo->agregar(material);
+   cubo->agregar(new MallaDiscoP4());
+   agregar(cubo);
+}
+
+NodoDiscoP24::NodoDiscoP24(){
+   NodoGrafoEscena *cubo = new NodoGrafoEscena();
+   Textura *cuadricula = new Textura("cuadricula.jpg");
+   Material *material = new Material(cuadricula, 0.5, 0.3, 0.7, 20.0);
+   cubo->ponerColor({0.8, 0.8, 0.8});
+   cubo->agregar(material);
+   cubo->agregar(new MallaDiscoP24());
+   agregar(cubo);
+}
