@@ -30,7 +30,9 @@ Muñeco::Muñeco(){
     cuerpo->agregar(scale(vec3{0.9,0.9,0.9}));
     cuerpo->agregar(translate(vec3{0.0,0.8,0.0}));
     Piramide *piramide=new Piramide();
-    piramide->ponerColor({1.0,0.0,0.0});
+    Textura * texturatronco = new Textura( "text-madera.jpg" );
+    Material * materialtronco = new Material(texturatronco, 0.6f, 0.5f, 1.5f, 1.0f);
+    cuerpo->agregar( materialtronco );
     cuerpo->agregar(piramide);
     muñeco->agregar(cuerpo);
 

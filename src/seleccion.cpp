@@ -63,8 +63,11 @@ int LeerIdentEnPixel( int xpix, int ypix )
    // COMPLETAR: práctica 5: leer el identificador codificado en el color del pixel (x,y)
    // .....(sustituir el 'return 0' por lo que corresponda)
    // .....
-
-   return 0 ;
+   unsigned char bytes[3] ; // para guardar los tres bytes
+   // leer los 3 bytes del frame-buffer
+   glReadPixels( xpix,ypix, 1,1, GL_RGB,GL_UNSIGNED_BYTE, (void *)bytes);
+   // reconstruir el identificador y devolverlo:
+   return bytes[0] + ( 0x100U*bytes[1] ) + ( 0x10000U*bytes[2] ) ;
 
 }
 
@@ -97,24 +100,35 @@ bool AplicacionIG::seleccion( int x, int y )
    //        el tamaño actual de la ventana en dos parámetros)
    //      * Activar el framebuffer, con su método 'activar'.
    // .......
+   if(apl->fbo==nullptr){
+      apl->fbo = new Framebuffer(ventana_tam_x,ventana_tam_y);
+   }
+   apl->fbo->activar(ventana_tam_x,ventana_tam_y);
 
 
    // (2) Visualizar la escena actual en modo selección. Se usará el método 'visualizarGL_Seleccion' de la clae 'Escena'
    //     
    // .......
+   escena->visualizarGL_Seleccion();
 
 
    // (3) Leer el identificador del pixel en las coordenadas (x,y), se usa 'LeerIdentEnPixel'.
    // .......
+   int identificador_pixel = LeerIdentEnPixel(x,y);
 
 
    // (4) Desactivar el FBO (vuelve a activar el FBO por defecto, con nombre '0'), 
    //     se usa el método 'desactivar' del FBO
    // .......
+   apl->fbo->desactivar();
 
 
    // (5) Si el identificador del pixel es 0, imprimir mensaje y terminar (devolver 'false')
    // .......
+   if(identificador_pixel==0){ //ESTO IMPRIME EL IDENTIFICADOR DEL PIXEL, NO LOS IDENTIFICADORES QUE ASIGNAMOS CON LA FUNCION PONERIDENTIFICADOR
+      cout << "El identificador del objeto en el pixel es 0" << endl;
+      return false;
+   }
 
 
    // (6) Buscar el identificdor en el objeto raiz de la escena y ejecutar 'cuandoClick',
@@ -126,7 +140,27 @@ bool AplicacionIG::seleccion( int x, int y )
    //       el mismo valor devuelto por 'cuandoClick'.
    //
    // .......
+   // Objeto3D *objeto = escena->objetoActual();
+   // mat4 *matriz = new mat4(1.0f); //esto está bien ya que la matriz del nodo raiz de un grafo es la matriz identidad
+   // vec3 centro = objeto->leerCentroOC();
+   // int identificador_raiz = objeto->leerIdentificador();
+   // cout<<identificador_raiz<<endl;
+   // bool encontrado = objeto->buscarObjeto( objeto->leerIdentificador(), *matriz, &objeto,centro );
+   // if(encontrado){
+   //    return objeto->cuandoClick(objeto->leerCentroOC());
+   // }
 
+
+   Objeto3D *objeto = escena->objetoActual();
+   mat4 *matriz = new mat4(1.0f); //esto está bien ya que la matriz del nodo raiz de un grafo es la matriz identidad
+   vec3 centro;
+   int identificador_raiz = objeto->leerIdentificador();
+   cout<<identificador_raiz<<endl;
+   Objeto3D *objeto_salida;
+   bool encontrado = objeto->buscarObjeto( objeto->leerIdentificador(), *matriz, &objeto_salida,centro );
+   if(encontrado){
+      return objeto_salida->cuandoClick(centro);
+   }
 
    // si el flujo de control llega aquí, es que no se encuentra ese identificador, devolver false:
    cout << "El identificador del objeto en el pixel no se encuentra en el objeto raíz que se está visualizando." << endl ;

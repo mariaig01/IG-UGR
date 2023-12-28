@@ -161,7 +161,8 @@ class Camara3Modos : public CamaraInteractiva
    // * perspectiva_ini : true si es una camara perspectiva, false si es ortográfica
    // * origen_ini      : punto de vista inicial (origen marco de cámara)
    // * punto_aten_ini  : punto de atención
-   // * fovy_grad_ini   : si es perspectiva, la apertura de campo vertical, en grados
+   // * fovy_grad_ini   : si es perspectiva, la apertura de campo vertical, en grados debe ser un valor real en grados, 
+   //mayor que 0 y menor que 180 (entre 50o y 80o es razonable).
 
    Camara3Modos( const bool perspectiva_ini,
                  const glm::vec3 & origen_ini, const float ratio_vp_ini,

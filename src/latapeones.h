@@ -5,6 +5,7 @@
 #include "grafo-escena.h"
 #include "malla-ind.h"
 using namespace std;
+using namespace glm;
 
 
 class Lata : public NodoGrafoEscena{
@@ -19,8 +20,11 @@ class LataPeones : public NodoGrafoEscena{
 };
 
 class PeonMadera : public NodoGrafoEscena {
+    protected:
+    mat4 *pm_tras=nullptr;
     public:
         PeonMadera(int nperfiles);
+        virtual bool cuandoClick( const glm::vec3 & centro_wc) ;
 };
 
 class PeonBlanco : public NodoGrafoEscena {

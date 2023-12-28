@@ -165,7 +165,25 @@ class Android : public NodoGrafoEscena
 };
 //-----------------------------------
 
+//--------Ejercicio 24 del tema 2 de las diapositivas
+class AndroidEjercicio25 : public NodoGrafoEscena
+{
+   protected:
+      mat4 * pm_rot_brazod = nullptr;
+      mat4 * pm_rot_brazoi = nullptr;
+      mat4 * pm_rot_cabeza = nullptr;
 
+    public:
+      AndroidEjercicio25();
+      void fijarRotBrazoIzq(const float alpha);
+      void fijarRotBrazoDech(const float beta);
+      void fijarRotCabeza( const float phi);
+      unsigned leerNumParametros() const;
+      void actualizarEstadoParametro( const unsigned iParam, const float tSec );
+      void extremidad(NodoGrafoEscena* transicion);
+
+};
+//-----------------------------------
 
 
 // ------------------------GRAFO EXAMEN 2022 PRÁCTICAS 1,2 Y 3------------------------
@@ -231,6 +249,12 @@ class NodoDiscoP4 : public NodoGrafoEscena{
 class NodoDiscoP24 : public NodoGrafoEscena{
    public:
       NodoDiscoP24();
+
+};
+
+class Prueba2 : public NodoGrafoEscena{
+   public:
+      Prueba2();
 
 };
 
@@ -352,5 +376,12 @@ class Casa : public NodoGrafoEscena
       Casa();
 };
 
+   //objetos.push_back(new MallaPrueba());
+
+//EXAMEN 
+class Teclado : public NodoGrafoEscena{
+public:
+   Teclado();
+};
 
 #endif // GRAFO_ESCENA_HPP

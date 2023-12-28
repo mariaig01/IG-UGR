@@ -67,6 +67,20 @@ Escena::Escena()
    // Añadir sentencias 'push_back' para añadir varias cámaras al vector 'camaras'.
    // Eliminar este 'push_back' de la cámara orbital simple ('CamaraOrbitalSimple') por varias cámaras de 3 modos ('Camara3Modos')
    camaras.push_back( new CamaraOrbitalSimple() );
+   /*
+   - El primer valor del constructor de Camara3Modos es perspectiva si es true y ortogonal si es false
+   - El ultimo valor del constructor es la apertura de campo vertical, en grados debe ser un valor real en grados, 
+      mayor que 0 y menor que 180 (entre 50o y 80o es razonable).
+   - El tercer valor del constructor es el ratio del view port
+   - El segundo valor del constructor es el origen del marco de cámara (posición del observador)
+   - EL cuarto valor del constructor es el punto de atención 
+   */
+     //Alzado
+    camaras.push_back(new Camara3Modos(true, {0.0,5.0,15.0}, 1.5, {0.0,0.0,0.0}, 50.0));
+    //Planta
+    camaras.push_back(new Camara3Modos(false, {0.0,15.0,5.0}, 1.5, {0.0,0.0,0.0}, 50.0));
+    //Perfil
+    camaras.push_back(new Camara3Modos(true, {15.0,0.0,0.0}, 1.5, {0.0,0.0,0.0}, 50.0));
    
 }
 // -----------------------------------------------------------------------------------------------
@@ -215,26 +229,33 @@ void Escena::visualizarGL_Seleccion(  )
    //       + fijar el modo de polígonos a 'relleno', con 'glPolygonMode'
    //
    // ........
-
+   glViewport(0,0,apl->ventana_tam_x,apl->ventana_tam_y);
+   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
    // (2) Activar  y configurar el cauce:
    //      + Activar el cauce (con el método 'activar')
    //      + Desactivar iluminación y texturas en el cauce
    //      + Poner el color actual del cauce a '0' (por defecto los objetos no son seleccionables)
    // ........
+   cauce->activar();
+   //las dos siguientes líneas desactivan la iluminación y las texturas
+   cauce->fijarEvalMIL(false); 
+   cauce->fijarEvalText(false);
+   cauce->fijarColor(0,0,0);
 
 
    // (3) Limpiar el framebuffer (color y profundidad) con color (0,0,0) (para indicar que en ningún pixel hay nada seleccionable)
    // ........
-
+   glClearColor(0,0,0,1);
 
    // (4) Recuperar la cámara actual (con 'camaraActual') y activarla en el cauce, 
    // ........
-
+   camaraActual()->activar(*cauce);
 
    // (5) Recuperar (con 'objetoActual') el objeto raíz actual de esta escena y 
    //     visualizarlo con 'visualizarModoSeleccionGL'.
    // ........
+   objetoActual()->visualizarModoSeleccionGL();
 
 }
 
@@ -379,12 +400,12 @@ Escena2::Escena2()
    // .......
    
 
-  
+   objetos.push_back(new AndroidEjercicio25());
    objetos.push_back( new MallaPLY("../materiales/plys/beethoven.ply") );
    objetos.push_back( new MallaPLY("../materiales/plys/big_dodge.ply") );
 
    objetos.push_back( new Cilindro(10,30) );
-    objetos.push_back( new Esfera(50,50) );
+   objetos.push_back( new Esfera(50,50) );
    objetos.push_back( new Cono(2,30) );
   
    objetos.push_back(new PiramideEstrellaZ(5));
@@ -425,13 +446,14 @@ Escena3::Escena3()
    // array 'objetos' otros objetos de la práctica 1
    // 
    // .......
+    //Modelo jerárquico
+   objetos.push_back(new Muñeco());
    objetos.push_back(new Ruedas());
    objetos.push_back(new Casa());
    
    objetos.push_back(new Coche());
    objetos.push_back(new Prueba());
-   //Modelo jerárquico
-   objetos.push_back(new Muñeco());
+  
 
    //Ejercicios adicionales
    objetos.push_back(new GrafoEstrellaX(5));
@@ -466,10 +488,14 @@ Escena4::Escena4()
    // array 'objetos' otros objetos de la práctica 1
    // 
    // .......+
+   objetos.push_back(new Teclado());
    objetos.push_back(new LataPeones() );
    objetos.push_back(new NodoCubo24());
    objetos.push_back(new NodoDiscoP4());
    objetos.push_back(new NodoDiscoP24());
+   //objetos.push_back(new Prueba2());
+   objetos.push_back(new MallaEXP4());
+   
 
 }
 
@@ -491,7 +517,7 @@ Escena5::Escena5()
    // array 'objetos' otros objetos de la práctica 1
    // 
    // .......
-
+   objetos.push_back(new VariasLatasPeones() );
 
 }
 

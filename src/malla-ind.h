@@ -204,6 +204,11 @@ class MallaDiscoP4 : public MallaInd
    MallaDiscoP4();
 };
 
+class MallaPrueba : public MallaInd{
+   public:
+   MallaPrueba();
+};
+
 class P1_Malla : public MallaInd{
 
 public:
@@ -310,7 +315,10 @@ class Trapecio : public MallaInd{
             Trapecio();
 };
 
-
+class TrapecioSinTecho : public MallaInd{
+   public:
+            TrapecioSinTecho();
+};
 
 class PoligonoRegular : public MallaInd{
 
@@ -388,6 +396,13 @@ class PiramideCruz : public MallaInd{
    public:
    PiramideCruz();
 
+};
+
+//EXAMEN PRÁCTICAS P4 Y P5
+class MallaEXP4 :public MallaInd
+{
+public:
+    MallaEXP4();
 };
 
 

@@ -286,6 +286,33 @@ void NodoGrafoEscena::visualizarModoSeleccionGL()
    // 6. Si el identificador no es -1, restaurar el color previo del cauce (con 'popColor')
    //
    // ........
+   int identificador = this->leerIdentificador();
+   if(identificador != -1){
+      cauce->pushColor();
+      cauce->fijarColor(ColorDesdeIdent(identificador));
+   }
+
+   cauce->pushMM();
+
+   for (size_t i=0; i < entradas.size(); i++)
+   {
+      switch(entradas[i].tipo)
+      {
+         case TipoEntNGE::objeto:
+            entradas[i].objeto->visualizarModoSeleccionGL();
+            break;
+         case TipoEntNGE::transformacion:
+            cauce->compMM( *(entradas[i].matriz) );
+            break;
+      }
+   }
+
+   cauce->popMM();
+
+   if(identificador != -1){
+      cauce->popColor();
+   }
+
 
 
 }
@@ -353,13 +380,37 @@ glm::mat4 * NodoGrafoEscena::leerPtrMatriz( unsigned indice )
 
 void NodoGrafoEscena::calcularCentroOC()
 {
-   using namespace std ;
-   using namespace glm ;
 
    // COMPLETAR: práctica 5: calcular y guardar el centro del nodo
    //    en coordenadas de objeto (hay que hacerlo recursivamente)
    //   (si el centro ya ha sido calculado, no volver a hacerlo)
    // ........
+   
+   if( centro_calculado )
+        return;
+
+    std::vector<vec3> centros;
+    vec3 cent = {0.0,0.0,0.0};
+   mat4 mmod = mat4( 1.0f );
+
+   for(int i=0; i<entradas.size(); i++){
+
+      if(entradas[i].tipo == TipoEntNGE::objeto){
+
+         entradas[i].objeto->calcularCentroOC();
+         centros.push_back(mmod * glm::vec4(entradas[i].objeto->leerCentroOC(), 1.0f));
+
+      }
+      else if(entradas[i].tipo == TipoEntNGE::transformacion) mmod = mmod * (*entradas[i].matriz);
+   }
+
+   for(int i = 0; i < centros.size(); i++) cent = cent + centros[i];
+
+    cent = cent/(float)centros.size();
+
+    ponerCentroOC(cent);
+
+    centro_calculado = true;
 
 }
 // -----------------------------------------------------------------------------
@@ -383,15 +434,29 @@ bool NodoGrafoEscena::buscarObjeto
 
    // 1. calcula el centro del objeto, (solo la primera vez)
    // ........
+    calcularCentroOC();
 
 
    // 2. si el identificador del nodo es el que se busca, ya está (terminar)
    // ........
+      if(leerIdentificador() == ident_busc){
+         centro_wc = glm::vec4(mmodelado * glm::vec4(leerCentroOC(), 1.0f));
+         *objeto = this;
+         return true;
+      }
+
+      // 3. El nodo no es el buscado: buscar recursivamente en los hijos
+      //    (si alguna llamada para un sub-árbol lo encuentra, terminar y devolver 'true')
+      // ........
+      glm::mat4 matriz = mmodelado;
 
 
-   // 3. El nodo no es el buscado: buscar recursivamente en los hijos
-   //    (si alguna llamada para un sub-árbol lo encuentra, terminar y devolver 'true')
-   // ........
+    for(int i=0; i<entradas.size(); i++){
+        if(entradas[i].tipo == TipoEntNGE::objeto){
+            if(entradas[i].objeto->buscarObjeto(ident_busc, matriz, objeto, centro_wc)) return true;
+        }
+        else if(entradas[i].tipo == TipoEntNGE::transformacion) matriz = matriz*(*entradas[i].matriz);
+    }
 
 
    // ni este nodo ni ningún hijo es el buscado: terminar
@@ -574,7 +639,7 @@ void GrafoCubos::actualizarEstadoParametro( const unsigned iParam, const float t
 
 //--------------------------------------------------------------------------
 
-
+//ARREGLAR
 //--------Ejercicio 24 del tema 2 de las diapositivas
 Android::Android()
 {
@@ -676,6 +741,141 @@ void Android::actualizarEstadoParametro( const unsigned iParam, const float t_se
 }
 
 void Android::extremidad(NodoGrafoEscena* transicion){
+
+   NodoGrafoEscena *extremidad = new NodoGrafoEscena(); 
+   extremidad->agregar(scale(vec3(0.2,0.2,0.2)));
+   extremidad->agregar(new SemiEsfera(100,100));
+
+   extremidad->agregar(inverse(scale(vec3(0.2,0.2,0.2))));
+   extremidad->agregar(scale(vec3(0.45,2.72,0.45)));
+   extremidad->agregar(translate(vec3(0,-1,0)));
+   extremidad->agregar(new Cilindro(10,30));
+
+   extremidad->agregar(inverse(scale(vec3{0.45,2.72,0.45})));
+   extremidad->agregar(scale(vec3(0.2,0.2,0.2)));
+   extremidad->agregar(rotate(160.3f,vec3{0,0,1}));
+   extremidad->agregar(new SemiEsfera(100,100));
+
+
+   agregar(scale(vec3(0.2,0.2,0.2)));
+   transicion->agregar(extremidad);
+
+}
+
+//ARREGLAR
+//--------Ejercicio 25 del tema 2 de las diapositivas
+AndroidEjercicio25::AndroidEjercicio25()
+{
+   NodoGrafoEscena *android = new NodoGrafoEscena();
+   NodoGrafoEscena *cabeza= new NodoGrafoEscena();
+
+   NodoGrafoEscena *semicabeza= new NodoGrafoEscena();
+   semicabeza->agregar(translate(vec3{0,1.1,0}));
+   semicabeza->agregar(scale(vec3(0.5,0.5,0.5)));
+   semicabeza->agregar(new SemiEsfera(100,100));
+   cabeza->agregar(semicabeza);
+  
+   NodoGrafoEscena *oreja_izq= new NodoGrafoEscena();
+   oreja_izq->agregar(translate(vec3{0.5,1.1,0}));
+   //oreja_izq->agregar(scale(vec3(0.1,0.1,0.1)));
+   extremidad(oreja_izq);
+   cabeza->agregar(oreja_izq);
+
+   NodoGrafoEscena *oreja_derch= new NodoGrafoEscena();
+   oreja_derch->agregar(translate(vec3{-0.5,1.1,0}));
+   //oreja_derch->agregar(scale(vec3(0.1,0.1,0.1)));
+   extremidad(oreja_derch);
+   cabeza->agregar(oreja_derch);
+
+   
+
+   NodoGrafoEscena *cuerpo=new NodoGrafoEscena();
+   cuerpo->agregar(new Cilindro(10,10));
+   cuerpo->agregar(rotate(180.0f,vec3{0,1,0}));
+   android->agregar(cuerpo);
+
+   NodoGrafoEscena *brazo_izq=new NodoGrafoEscena();
+   unsigned int ind_rot_brazoi = brazo_izq->agregar(rotate(0.0f,vec3{0,1,0}));
+   brazo_izq->agregar(translate(vec3{3.4,4.3,0}));
+   extremidad(brazo_izq);
+   android->agregar(brazo_izq);
+   pm_rot_brazoi = brazo_izq->leerPtrMatriz(ind_rot_brazoi);
+
+
+   NodoGrafoEscena *brazo_derch=new NodoGrafoEscena();
+   unsigned int ind_rot_brazod = brazo_derch->agregar(rotate(0.0f,vec3{0,1,0}));
+   brazo_derch->agregar(scale(vec3{5,5,5}));
+   brazo_derch->agregar(translate(vec3{-3.4,4.3,0}));
+   extremidad(brazo_derch);
+   this->agregar(brazo_derch);
+   pm_rot_brazod = brazo_derch->leerPtrMatriz(ind_rot_brazod);
+
+   NodoGrafoEscena *pie_izq=new NodoGrafoEscena();
+   pie_izq->agregar(scale(vec3{25,25,25}));
+   pie_izq->agregar(translate(vec3{-1,0,0}));
+   extremidad(pie_izq);
+   android->agregar(pie_izq);
+
+
+   NodoGrafoEscena *pie_derch=new NodoGrafoEscena();
+   pie_derch->agregar(scale(vec3{125,125,125}));
+   pie_derch->agregar(translate(vec3{1,0,0}));
+   extremidad(pie_derch);
+   android->agregar(pie_derch);
+
+   unsigned int ind_rot_cabeza = cabeza->agregar(rotate(0.0f,vec3{0,1,0}));
+   android->agregar(cabeza);
+   pm_rot_cabeza = cabeza->leerPtrMatriz(ind_rot_cabeza);
+   android->agregar(scale(vec3{125,125,125}));
+   agregar(android);
+   
+}
+
+void AndroidEjercicio25::fijarRotBrazoIzq( const float alpha )
+{
+    float rot = -sin(2*M_PI*0.7*alpha)/10;
+   *pm_rot_brazoi = rotate(-rot, vec3{1.0, 0.0, 0.0});
+   
+}
+
+void AndroidEjercicio25::fijarRotBrazoDech( const float alpha )
+{
+    float rot = -sin(2*M_PI*0.7*alpha)/10;
+   *pm_rot_brazod = rotate(rot, vec3{1.0, 0.0, 0.0});
+   
+}
+
+void AndroidEjercicio25::fijarRotCabeza( const float alpha )
+{
+   float rot = alpha * 360.0;
+   *pm_rot_cabeza = rotate(rot, vec3{0.0, 1.0, 0.0});
+}
+
+unsigned AndroidEjercicio25::leerNumParametros() const
+{
+   return 3;
+}
+
+void AndroidEjercicio25::actualizarEstadoParametro( const unsigned iParam, const float t_sec )
+{
+   assert(iParam < leerNumParametros()); 
+
+   switch(iParam)
+   {
+      case 0:
+         fijarRotBrazoDech(t_sec);
+         break;
+      case 1:
+         fijarRotBrazoDech(t_sec);
+         break;
+      case 2: 
+         fijarRotCabeza(t_sec);
+         break;
+
+   }
+}
+
+void AndroidEjercicio25::extremidad(NodoGrafoEscena* transicion){
 
    NodoGrafoEscena *extremidad = new NodoGrafoEscena(); 
    extremidad->agregar(scale(vec3(0.2,0.2,0.2)));
@@ -1389,4 +1589,26 @@ NodoDiscoP24::NodoDiscoP24(){
    cubo->agregar(material);
    cubo->agregar(new MallaDiscoP24());
    agregar(cubo);
+   
+}
+
+Prueba2::Prueba2(){
+   NodoGrafoEscena *cubo = new NodoGrafoEscena();
+   Textura *cuadricula = new Textura("window-icon.jpg");
+   Material *material = new Material(cuadricula, 0.5, 0.3, 0.7, 20.0);
+   cubo->ponerColor({0.8, 0.8, 0.8});
+   cubo->agregar(material);
+   cubo->agregar(new MallaPrueba());
+   agregar(cubo);
+}
+
+Teclado::Teclado(){
+   NodoGrafoEscena *cubo = new NodoGrafoEscena();
+   Textura *cuadricula = new Textura("numero1.jpg");
+   Material *material = new Material(cuadricula, 0.5, 0.3, 0.7, 20.0);
+   cubo->ponerColor({0.8, 0.8, 0.8});
+   cubo->agregar(material);
+   cubo->agregar(new Trapecio());
+   agregar(cubo);
+
 }
