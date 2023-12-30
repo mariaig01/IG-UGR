@@ -1612,3 +1612,33 @@ Teclado::Teclado(){
    agregar(cubo);
 
 }
+
+
+//-----------------EJERCICIOS EXAMEN ORDINARIA CURSO 2022/2023 PRÁCTICAS 4 Y 5------------------------
+NodoEXP4::NodoEXP4() {
+    agregar(new Material(new Textura("textura-exp4-v2.jpg"),0.5, 0.5, 0.5, 80.0));
+    MallaEXP4 *tetraedro=new MallaEXP4();
+    agregar(tetraedro);
+}
+
+EsferaEXP5::EsferaEXP5() {
+    Esfera *e=new Esfera(10,10);
+    ponerColor({1,1,1});
+    agregar(e);
+}
+
+AnilloEXP5::AnilloEXP5(unsigned n) {
+    for(int i =0;i<n;i++){
+        NodoGrafoEscena *nodo_trasicion=new NodoGrafoEscena();
+        nodo_trasicion->agregar(translate(vec3{1.0,0.0,0.0}));
+        nodo_trasicion->agregar(scale(vec3(M_PI/n,M_PI/n,M_PI/n)));
+
+        EsferaEXP5 *esf=new EsferaEXP5();
+        esf->ponerIdentificador(700+i+1);
+        nodo_trasicion->agregar(esf);
+        agregar(nodo_trasicion);
+        agregar(rotate(float(360.0/n),vec3{0,1,0}));
+    }
+
+
+}

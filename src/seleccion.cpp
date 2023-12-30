@@ -67,7 +67,7 @@ int LeerIdentEnPixel( int xpix, int ypix )
    // leer los 3 bytes del frame-buffer
    glReadPixels( xpix,ypix, 1,1, GL_RGB,GL_UNSIGNED_BYTE, (void *)bytes);
    // reconstruir el identificador y devolverlo:
-   return bytes[0] + ( 0x100U*bytes[1] ) + ( 0x10000U*bytes[2] ) ;
+   return int(bytes[0]) + (int(0x100U)*int(bytes[1])) + (int(0x10000U)*int(bytes[2])) ;
 
 }
 

@@ -378,10 +378,40 @@ class Casa : public NodoGrafoEscena
 
    //objetos.push_back(new MallaPrueba());
 
-//EXAMEN 
+//EXAMEN EXTRAORDINARIA CURSO 2022/2023
 class Teclado : public NodoGrafoEscena{
 public:
    Teclado();
 };
+
+//EJERCICIOS EXAMEN ORDINARIA CURSO 2022/2023 PRÁCTICAS 4 Y 5
+class NodoEXP4 : public NodoGrafoEscena
+{
+public:
+    NodoEXP4();
+};
+
+class EsferaEXP5 : public NodoGrafoEscena
+{
+protected:
+    bool seleccionada=false;
+public:
+    EsferaEXP5();
+    bool getSelec(){
+        return seleccionada;
+    }
+    void setSelec(bool s){
+        seleccionada=s;
+    }
+};
+
+class AnilloEXP5 :public NodoGrafoEscena
+{
+
+public:
+    AnilloEXP5(unsigned n);
+};
+
+
 
 #endif // GRAFO_ESCENA_HPP

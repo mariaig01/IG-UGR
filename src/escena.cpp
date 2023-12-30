@@ -493,8 +493,7 @@ Escena4::Escena4()
    objetos.push_back(new NodoCubo24());
    objetos.push_back(new NodoDiscoP4());
    objetos.push_back(new NodoDiscoP24());
-   //objetos.push_back(new Prueba2());
-   objetos.push_back(new MallaEXP4());
+   objetos.push_back(new NodoEXP4());
    
 
 }
@@ -517,6 +516,7 @@ Escena5::Escena5()
    // array 'objetos' otros objetos de la práctica 1
    // 
    // .......
+   objetos.push_back(new AnilloEXP5(10));
    objetos.push_back(new VariasLatasPeones() );
 
 }
