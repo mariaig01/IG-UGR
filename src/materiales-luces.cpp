@@ -170,7 +170,6 @@ std::string Material::nombre() const
 /*La clase Material encapsula una textura (opcionalmente) y además los parámetros del modelo
 de iluminación local que no está asociados a las fuentes de luz (estos son: los coeficientes de 
 reflexión ambiental, difusa y especular, y el exponente de brillo, en total 4 valores de tipo float.*/
-//MODIFICAR
 void Material::activar( )
 {
    using namespace std ;
@@ -246,7 +245,7 @@ void ColFuentesLuz::insertar( FuenteLuz * pf )  // inserta una nueva
 dos ángulos de cada una), y otro con los colores, y usar ambos vectores para invocar el métodofijarFuentesLuz
 del cauce en uso (el cauce es un parámetro de activar). A partir de que una colección de fuentes
 se activa, las fuentes que incluye se usan para la evaluación del modelo de iluminación local.*/
-//MODIFICAR
+
 void ColFuentesLuz::activar( )
 {
    using namespace std ;
@@ -260,19 +259,18 @@ void ColFuentesLuz::activar( )
    // .....
 
    std::vector<glm::vec3> colores;
-   std::vector<glm::vec4> pos_dir_wc;
+   std::vector<glm::vec4> pos_dir;
 
-   for (size_t i=0; i < vpf.size(); i++)
+   for (int i=0; i < vpf.size(); i++)
    {
-      colores.push_back(vpf.at(i)->color);
-      glm::vec4 pos_vpf = vec4(cos(radians(vpf.at(i)->lati)), 
-                               sin(radians(vpf.at(i)->lati))*cos(radians(vpf.at(i)->longi)),
-                               sin(radians(vpf.at(i)->lati))*sin(radians(vpf.at(i)->longi)),
-                               0.0);
-      pos_dir_wc.push_back(pos_vpf);
+      FuenteLuz * fuente = vpf.at(i);
+      float latitud = fuente->lati;
+      float longitud = fuente->longi;
+      colores.push_back(fuente->color);
+      pos_dir.push_back(vec4(cos(radians(latitud)), sin(radians(latitud))*cos(radians(longitud)),sin(radians(latitud))*sin(radians(longitud)),0.0));
    }
 
-   cauce->fijarFuentesLuz(colores, pos_dir_wc);
+   cauce->fijarFuentesLuz(colores, pos_dir);
 
 
 }

@@ -240,7 +240,7 @@ void NodoGrafoEscena::visualizarNormalesGL(  )
     cauce->pushMM();
 
    
-   for (size_t i=0; i < entradas.size(); i++)
+   for (int i=0; i < entradas.size(); i++)
    {
       switch(entradas[i].tipo)
       {
@@ -249,9 +249,6 @@ void NodoGrafoEscena::visualizarNormalesGL(  )
             break;
          case TipoEntNGE::transformacion:
             cauce->compMM( *(entradas[i].matriz) );
-            break;
-         case TipoEntNGE::material:
-         case TipoEntNGE::noInicializado:
             break;
       }
    }

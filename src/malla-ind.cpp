@@ -69,52 +69,8 @@ void MallaInd::calcularNormalesTriangulos()
       assert( nt == nor_tri.size() );
       return ;
    }
-   
-   // // COMPLETAR: Práctica 4: creación de la tabla de normales de triángulos
-   // // ....
-   // //MODIFICAR
-   //  for (size_t i=0; i < triangulos.size(); i++)
-   // {
-   //    uvec3 tri = triangulos[i];
-   //    unsigned int p = tri[0],
-   //                 q = tri[1],
-   //                 r = tri[2];
-
-   //    vec3 a = vertices[q] - vertices[p];
-   //    vec3 b = vertices[r] - vertices[p];
-   //    vec3 m_c = glm::cross(a, b);
-   //    vec3 n_c;
-
-   //    if (length(m_c) != 0.0)
-   //       n_c = normalize(m_c);
-   //    else
-   //       n_c = vec3(0, 0, 0);
-
-   //    nor_tri.push_back(n_c);
-   // }
-
- 
 
    //COMPLETAR: Práctica 4: creación de la tabla de normales de triángulos
-   
-   //  for(int i=0;i<nt;i++){
-   //      uvec3 tri=triangulos.at(i);
-   //      fvec3 q=vertices.at(tri[0]);
-   //      fvec3 p=vertices.at(tri[1]);
-   //      vec3 r=vertices.at(tri[2]);
-   //      vec3 a=q-p;
-   //      vec3 b=r-p;
-   //      vec3 m;
-   //      float m_factor;
-   //      m[0]=(a[1]*b[2]-a[2]*b[1]);
-   //      m[1]=(a[2]*b[0]-a[0]*b[2]);
-   //      m[2]=(a[0]*b[1]-a[1]*b[0]);
-   //      m_factor=std::sqrt(m[0]*m[0]+m[1]*m[1]+m[2]*m[2]);
-   //      vec3 n=m/m_factor;
-   //      nor_tri.push_back(n);
-   //  }
-
-
     vec3 v_1,v_2,v_3;
    for(int i=0;i<triangulos.size();i++)
    {
@@ -139,51 +95,54 @@ void MallaInd::calcularNormales()
    // COMPLETAR: en la práctica 4: calculo de las normales de la malla
    // se debe invocar en primer lugar 'calcularNormalesTriangulos'
    // .......
-   //MODIFICAR
-   //  calcularNormalesTriangulos();
+  
 
-   // nor_ver.resize(vertices.size(), glm::vec3(0, 0, 0));
-
-   // for (size_t i=0; i < triangulos.size(); i++)
-   // {
-   //    glm::uvec3 tri = triangulos[i];
-   //    unsigned int v1 = tri[0],
-   //                 v2 = tri[1],
-   //                 v3 = tri[2];
-                   
-   //    nor_ver[v1] += nor_tri[i];
-   //    nor_ver[v2] += nor_tri[i];
-   //    nor_ver[v3] += nor_tri[i];
-   // }
-
-   // for (size_t i=0; i < nor_ver.size(); i++)
-   //    if (glm::length(nor_ver[i]) != 0.0)
-   //       nor_ver[i] = glm::normalize(nor_ver[i]);
-
-
+   //Calcular normales de los triángulos
    calcularNormalesTriangulos();
-    std::vector<vec3> mv;
-    for(int i=0;i<vertices.size();i++){
-        vec3 t={0,0,0};
-        mv.push_back(t);
-    }
-    for(int i=0;i<nor_tri.size();i++){
-        for(int j=0;j<3;j++){
-            for(int k=0;k<3;k++){
-                mv.at(triangulos.at(i)[j])[k]+=nor_tri.at(i)[k];
-            }
-        }
-    }
-    //normalizamos
-    for(int i=0;i<vertices.size();i++){
-        vec3 m_nor;
-        vec3 m=mv.at(i);
-        float m_factor=std::sqrt(m[0]*m[0]+m[1]*m[1]+m[2]*m[2]);
-        m_nor=m/m_factor;
-        mv.at(i)=m_nor;
-    }
-    nor_ver=mv;
 
+   // Inicializar normales por vértice
+   nor_ver.resize(vertices.size(), glm::vec3(0.0f));
+
+   // Acumular las normales de los triángulos en los vértices correspondientes
+   for (const auto& tri : triangulos)
+   {
+      nor_ver[tri[0]] += nor_tri[tri[2]];
+      nor_ver[tri[1]] += nor_tri[tri[2]];
+      nor_ver[tri[2]] += nor_tri[tri[2]];
+   }
+
+   // Normalizar las normales por vértice
+   for (auto& nor : nor_ver)
+   {
+      if (glm::length(nor) != 0.0f)
+         nor = glm::normalize(nor);
+   }
+
+   // Volver a calcular las normales de los triángulos
+   calcularNormalesTriangulos();
+
+   // Calcular normales por vértice usando una matriz de acumulación
+   std::vector<glm::vec3> mv(vertices.size(), glm::vec3(0.0f));
+
+   for (size_t i = 0; i < nor_tri.size(); ++i)
+   {
+      for (int j = 0; j < 3; ++j)
+      {
+         for (int k = 0; k < 3; ++k)
+         {
+            mv[triangulos[i][j]][k] += nor_tri[i][k];
+         }
+      }
+   }
+
+   // Normalizar las normales por vértice
+   for (auto& m : mv)
+   {
+      m = glm::normalize(m);
+   }
+
+   // Asignar las normales por vértice calculadas
+   nor_ver = mv;
 
 }
 
@@ -331,6 +290,7 @@ void MallaInd::visualizarNormalesGL(  )
       dvao_normales = new DescrVAO( 1, new DescrVBOAtribs( ind_atrib_posiciones, segmentos_normales )); 
 
    }
+  
 
    // *2* Visualizar el VAO de normales, usando el método 'draw' del descriptor, con el 
    //       tipo de primitiva 'GL_LINES'.

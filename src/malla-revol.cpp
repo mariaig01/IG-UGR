@@ -49,112 +49,112 @@ void MallaRevol::inicializar
 )
 {
    // COMPLETAR: Práctica 4: crear tablas de normales 
-   vector<vec3> aristas;
-   vector<float> d_i;
+      vector<vec3> aristas;
+      vector<float> d_i;
 
-   // Aristas
-   for (int i=0; i < perfil.size()-1; i++)
-   {
-      aristas.push_back(perfil[i+1]-perfil[i]);
-      d_i.push_back(length(aristas[i]));
-   }
+      // Aristas
+      for (int i=0; i < perfil.size()-1; i++)
+      {
+         aristas.push_back(perfil[i+1]-perfil[i]);
+         d_i.push_back(length(aristas[i]));
+      }
 
-   float suma = 0.0;
-   for (int i=0; i < d_i.size(); i++)
-      suma += d_i[i];
+      float suma = 0.0;
+      for (int i=0; i < d_i.size(); i++)
+         suma += d_i[i];
 
 
-   vector<float> t_i;
-   // Calculo de las coordenadas de texturas
-   float d_j;
-   for (int i=0; i < perfil.size(); i++)
-   {
-      d_j = 0.0;
-      for (int j=0; j < i; j++)
-         d_j += d_i[j];
-      
-      t_i.push_back(d_j / suma);
-   }
+      vector<float> t_i;
+      // Calculo de las coordenadas de texturas
+      float d_j;
+      for (int i=0; i < perfil.size(); i++)
+      {
+         d_j = 0.0;
+         for (int j=0; j < i; j++)
+            d_j += d_i[j];
+         
+         t_i.push_back(d_j / suma);
+      }
 
-   vector<vec3> nor_aristas;
-   // Calculo de las normales de las aristas del perfil
-   for (int i=0; i < aristas.size(); i++)
-   {
-      vec3 nor_ari = vec3(aristas[i].y, -aristas[i].x, 0);
+      vector<vec3> nor_aristas;
+      // Calculo de las normales de las aristas del perfil
+      for (int i=0; i < aristas.size(); i++)
+      {
+         vec3 nor_ari = vec3(aristas[i].y, -aristas[i].x, 0);
 
-      if (length(nor_ari) != 0.0)
-         nor_ari = normalize(nor_ari);
+         if (length(nor_ari) != 0.0)
+            nor_ari = normalize(nor_ari);
 
-      nor_aristas.push_back(nor_ari);
-   }
+         nor_aristas.push_back(nor_ari);
+      }
 
-   // Cálculo de las normales de los vértices del perfil
-   vector<vec3> normales_vertices;
-   vec3 normal_vertice;
+      // Cálculo de las normales de los vértices del perfil
+      vector<vec3> normales_vertices;
+      vec3 normal_vertice;
 
-  
-   normales_vertices.push_back(nor_aristas[0]);
-   for (size_t i=1; i < perfil.size()-1; i++)
-   {
-      
-      normal_vertice = nor_aristas[i-1]+nor_aristas[i];
-
-      
-      if (glm::length(normal_vertice) != 0.0)
-         normal_vertice = glm::normalize(normal_vertice);
-
-      normales_vertices.push_back(normal_vertice);
-   }
    
-   normales_vertices.push_back(nor_aristas[perfil.size()-2]);
-
-  // COMPLETAR: Práctica 2: completar: creación de la malla....
-
-  float x,y,z,rot;
-  float x_nor, y_nor, z_nor;
-  float seno, coseno;
-   // creación de tabla de vertices
-   for(int i=0; i<num_copias; ++i){
-      float angulo=(2*M_PI*i)/(num_copias-1);
-      coseno=cos(angulo);
-      seno=sin(angulo);
-      for(int j=0; j<perfil.size(); ++j){
+      normales_vertices.push_back(nor_aristas[0]);
+      for (size_t i=1; i < perfil.size()-1; i++)
+      {
          
-         x=coseno*perfil.at(j)[0]+seno*perfil.at(j)[2];
-         y=perfil.at(j)[1];
-         z=-seno*perfil.at(j)[0]+coseno*perfil.at(j)[2];
+         normal_vertice = nor_aristas[i-1]+nor_aristas[i];
 
-         vertices.push_back({x,y,z});
-         //añadir normales. La normal de cualquier vétice de la malla completa es igual
-         //a la normal (rotada) del correspondiente vértice del perfil original
-
-         //Rotacion de la normal
-         rot = normales_vertices[j].x;
-         x_nor = rot*cos(angulo);
-         y_nor = normales_vertices[j].y;
-         z_nor = -rot*sin(angulo);
-         vec3 aux = vec3(x_nor,y_nor,z_nor);
-
-         if (length(aux) != 0.0)
-            aux = normalize(aux);
-
-         nor_ver.push_back(aux);
          
-         // Añadir coordenadas de textura
-         float s = float(i) / (num_copias-1);
-         float t = 1 - t_i[j];
-         cc_tt_ver.push_back({s,t});
+         if (glm::length(normal_vertice) != 0.0)
+            normal_vertice = glm::normalize(normal_vertice);
+
+         normales_vertices.push_back(normal_vertice);
       }
-   }
-   // creación de triangulos
-   int k=0;
-   for( int i=0; i<num_copias-1; ++i){
-      for( int j=0; j<perfil.size()-1; ++j){
-         k=i*perfil.size() + j;
-         triangulos.push_back({k,k+perfil.size(),k+perfil.size()+1});
-         triangulos.push_back({k,k+perfil.size()+1,k+1});
+      
+      normales_vertices.push_back(nor_aristas[perfil.size()-2]);
+
+   // COMPLETAR: Práctica 2: completar: creación de la malla....
+
+   float x,y,z,rot;
+   float x_nor, y_nor, z_nor;
+   float seno, coseno;
+      // creación de tabla de vertices
+      for(int i=0; i<num_copias; ++i){
+         float angulo=(2*M_PI*i)/(num_copias-1);
+         coseno=cos(angulo);
+         seno=sin(angulo);
+         for(int j=0; j<perfil.size(); ++j){
+            
+            x=coseno*perfil.at(j)[0]+seno*perfil.at(j)[2];
+            y=perfil.at(j)[1];
+            z=-seno*perfil.at(j)[0]+coseno*perfil.at(j)[2];
+
+            vertices.push_back({x,y,z});
+            //añadir normales. La normal de cualquier vétice de la malla completa es igual
+            //a la normal (rotada) del correspondiente vértice del perfil original
+
+            //Rotacion de la normal
+            rot = normales_vertices[j].x;
+            x_nor = rot*cos(angulo);
+            y_nor = normales_vertices[j].y;
+            z_nor = -rot*sin(angulo);
+            vec3 aux = vec3(x_nor,y_nor,z_nor);
+
+            if (length(aux) != 0.0)
+               aux = normalize(aux);
+
+            nor_ver.push_back(aux);
+            
+            // Añadir coordenadas de textura
+            float s = float(i) / (num_copias-1);
+            float t = 1 - t_i[j];
+            cc_tt_ver.push_back({s,t});
+         }
       }
-   }
+      // creación de triangulos
+      int k=0;
+      for( int i=0; i<num_copias-1; ++i){
+         for( int j=0; j<perfil.size()-1; ++j){
+            k=i*perfil.size() + j;
+            triangulos.push_back({k,k+perfil.size(),k+perfil.size()+1});
+            triangulos.push_back({k,k+perfil.size()+1,k+1});
+         }
+      }
 }
 
 // -----------------------------------------------------------------------------
