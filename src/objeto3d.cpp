@@ -95,7 +95,7 @@ bool Objeto3D::cuandoClick( const glm::vec3 & centro_wc )
    Escena * escena = apl->escenas[apl->ind_escena_act] ; assert( escena != nullptr );
 
    cout << "Ejecutando método 'cuandoClick' por defecto." << endl ;
-   cout << "Click realizado sobre el objeto: '" << leerNombre() << "'" << endl ;
+   cout << "Click realizado sobre el objeto: '" << leerNombre() << "'" <<"con identificador "<< leerIdentificador() << endl ;
 
    // COMPLETAR: práctica 5: apuntar la cámara actual a este objeto 
    //

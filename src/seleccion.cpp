@@ -153,11 +153,9 @@ bool AplicacionIG::seleccion( int x, int y )
 
    Objeto3D *objeto = escena->objetoActual();
    mat4 *matriz = new mat4(1.0f); //esto está bien ya que la matriz del nodo raiz de un grafo es la matriz identidad
-   vec3 centro;
-   int identificador_raiz = objeto->leerIdentificador();
-   cout<<identificador_raiz<<endl;
-   Objeto3D *objeto_salida;
-   bool encontrado = objeto->buscarObjeto( objeto->leerIdentificador(), *matriz, &objeto_salida,centro );
+   vec3 centro=vec3(0.0f,0.0f,0.0f);
+   Objeto3D *objeto_salida=nullptr;
+   bool encontrado = objeto->buscarObjeto( identificador_pixel, *matriz, &objeto_salida,centro );
    if(encontrado){
       return objeto_salida->cuandoClick(centro);
    }

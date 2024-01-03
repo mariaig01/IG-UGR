@@ -286,7 +286,7 @@ void NodoGrafoEscena::visualizarModoSeleccionGL()
    // 6. Si el identificador no es -1, restaurar el color previo del cauce (con 'popColor')
    //
    // ........
-   int identificador = this->leerIdentificador();
+   int identificador = leerIdentificador();
    if(identificador != -1){
       cauce->pushColor();
       cauce->fijarColor(ColorDesdeIdent(identificador));
@@ -294,7 +294,7 @@ void NodoGrafoEscena::visualizarModoSeleccionGL()
 
    cauce->pushMM();
 
-   for (size_t i=0; i < entradas.size(); i++)
+   for (int i=0; i < entradas.size(); i++)
    {
       switch(entradas[i].tipo)
       {
@@ -412,6 +412,8 @@ void NodoGrafoEscena::calcularCentroOC()
 
     centro_calculado = true;
 
+   
+
 }
 // -----------------------------------------------------------------------------
 // método para buscar un objeto con un identificador y devolver un puntero al mismo
@@ -461,6 +463,9 @@ bool NodoGrafoEscena::buscarObjeto
 
    // ni este nodo ni ningún hijo es el buscado: terminar
    return false ;
+
+  
+
 }
 
 

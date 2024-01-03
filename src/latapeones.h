@@ -20,11 +20,11 @@ class LataPeones : public NodoGrafoEscena{
 };
 
 class PeonMadera : public NodoGrafoEscena {
-    protected:
-    mat4 *pm_tras=nullptr;
+    // protected:
+    // mat4 *pm_tras=nullptr;
     public:
         PeonMadera(int nperfiles);
-        virtual bool cuandoClick( const glm::vec3 & centro_wc) ;
+        //virtual bool cuandoClick( const glm::vec3 & centro_wc) ;
 };
 
 class PeonBlanco : public NodoGrafoEscena {
@@ -37,10 +37,13 @@ class PeonNegro : public NodoGrafoEscena {
         PeonNegro(int nperfiles);
 };
 
-class VariasLatasPeones : public NodoGrafoEscena{
+
+class VariasLatasPeones : public LataPeones {
     public:
-    VariasLatasPeones();
+        VariasLatasPeones();
 };
+
+
 
 
 

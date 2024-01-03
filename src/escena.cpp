@@ -241,12 +241,13 @@ void Escena::visualizarGL_Seleccion(  )
    //las dos siguientes líneas desactivan la iluminación y las texturas
    cauce->fijarEvalMIL(false); 
    cauce->fijarEvalText(false);
-   cauce->fijarColor(0,0,0);
+   cauce->fijarColor(vec4(0.0, 0.0, 0.0, 1.0));
 
 
    // (3) Limpiar el framebuffer (color y profundidad) con color (0,0,0) (para indicar que en ningún pixel hay nada seleccionable)
    // ........
    glClearColor(0,0,0,1);
+   glClear(GL_DEPTH_BUFFER_BIT); //sin esto no funciona al seleccionar un pixel
 
    // (4) Recuperar la cámara actual (con 'camaraActual') y activarla en el cauce, 
    // ........
@@ -516,8 +517,8 @@ Escena5::Escena5()
    // array 'objetos' otros objetos de la práctica 1
    // 
    // .......
-   objetos.push_back(new AnilloEXP5(10));
    objetos.push_back(new VariasLatasPeones() );
+   objetos.push_back(new AnilloEXP5(10));
 
 }
 
